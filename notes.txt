@@ -1,0 +1,112 @@
+src/models
+├── addresses
+│   ├── entities
+│   │   └── address.entity.ts
+│   ├── interfaces
+│   │   └── address.interface.ts
+│   ├── serializers
+│   │   └── address.serializer.ts
+│   ├── addressess.controller.ts
+│   ├── addresses.module.ts
+│   ├── addresses.repository.ts
+│   └── addresses.service.ts
+└── users
+    ├── entities
+    │   └── user.entity.ts
+    ├── interfaces
+    │   └── user.interface.ts
+    ├── serializers
+    │   └── user.serializer.ts
+    ├── users.controller.ts
+    ├── users.module.ts
+    ├── users.repository.ts
+    └── users.service.ts
+
+src/common
+├── constants
+│   └── settings.ts
+├── decorators
+│   ├── metadata
+│   │   └── user-types.decorator.ts
+│   ├── requests
+│   │   └── logged-in-user.decorator.ts
+│   └── validations
+│       ├── UserExists.ts
+│       └── UniqueUserEmail.ts
+├── exceptions
+│   └── http-exception.filter.ts
+├── guards
+│   └── user-types.guard.ts
+├── helpers
+│   ├── exceptions
+│   │   └── validation.helper.ts
+│   ├── responses
+│   │   ├── error.helper.ts
+│   │   └── success.helper.ts
+│   ├── number.helper.ts
+│   ├── array.helper.ts
+│   ├── query.helper.ts
+│   ├── request.helper.ts
+│   └── string.helper.ts
+├── interceptors
+│   └── http-cache.interceptor.ts
+├── interfaces
+│   ├── inputs.interface.ts
+│   └── search.interface.ts
+├── middleware
+│   └── models
+│       └── user.middleware.ts
+├── pipes
+│   ├── models
+│   │   └── user-entity.pipe.ts
+│   ├── search.pipe.ts
+│   └── validation.pipe.ts
+└── serializers
+    ├── responses
+    │   ├── error.serializer.ts
+    │   └── success.serializer.ts
+    ├── validation
+    │   └── validation-error.serializer.ts
+    └── model.serializer.ts
+
+src/database
+├── factories
+│   ├── addresses
+│   │   └── factory.ts
+│   └── users
+│       └── factory.ts
+├── migrations
+│   ├── 1590973586541-CreateAddressesTable.ts
+│   └── 1592951122241-CreateUsersTable.ts
+└── seeders
+    ├── addresses
+    │   ├── seeder.module.ts
+    │   └── seeder.service.ts
+    └── users
+        ├── seeder.module.ts
+        └── seeder.service.ts
+
+src/config
+├── app
+│   ├── config.module.ts
+│   ├── config.service.ts
+│   └── configuration.ts
+├── cache
+│   ├── config.module.ts
+│   ├── config.service.ts
+│   └── configuration.ts
+├── database
+│   ├── mongo
+│   │   ├── config.module.ts
+│   │   ├── config.service.ts
+│   │   └── configuration.ts
+│   ├── mysql
+│   │   └── [...]
+│   └── postgres
+│       └── [...]
+├── queue
+│   └── [...]
+├── session
+│   └── [...]
+└── storage
+    └── [...]
