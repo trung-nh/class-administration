@@ -38,4 +38,12 @@ export class StudentsRepository extends Repository<Student> {
       )
       .execute();
   }
+
+  suspendStudent(student: Student) {
+    return this.createQueryBuilder()
+      .update()
+      .set({ isSuspended: true })
+      .where({ id: student.id })
+      .execute();
+  }
 }

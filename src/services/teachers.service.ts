@@ -7,6 +7,7 @@ import { TeacherStudentsRepository } from '../repositories/teacher-students.repo
 import { Student } from '../entities/student.entity';
 import { TeacherStudent } from '../entities/teacher-student.entity';
 import { GetCommonStudentsDto } from '../dtos/response/get-common-students.dto';
+import { SuspendStudentDto } from '../dtos/request/suspend-student.dto';
 
 @Injectable()
 export class TeachersService {
@@ -76,8 +77,28 @@ export class TeachersService {
       let commonStudents: Student[] =
         await this.studentRepository.getCommonStudents(teachers);
       let result: string[] =
-        commonStudents?.map((student: Student) => student.email + '@#') || [];
+        commonStudents?.map((student: Student) => student.email) || [];
       return { students: result };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async suspendStudent(suspendStudentDto: SuspendStudentDto): Promise<void> {
+    try {
+      // check student's existence
+      let existingStudent = await this.studentRepository.getOneByEmail(
+        suspendStudentDto.student,
+      );
+      if (!existingStudent) {
+        throw new HttpException(
+          'No student with such email found!',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      // suspend
+      await this.studentRepository.suspendStudent(existingStudent);
     } catch (error) {
       throw error;
     }

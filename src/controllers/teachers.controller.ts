@@ -7,13 +7,12 @@ import {
   ParseArrayPipe,
   Post,
   Query,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { TeachersService } from '../services/teachers.service';
 import { RegisterStudentsDto } from '../dtos/request/register-students.dto';
 import { GetCommonStudentsDto } from '../dtos/response/get-common-students.dto';
 import { TestDto } from '../dtos/request/test.dto';
+import { SuspendStudentDto } from '../dtos/request/suspend-student.dto';
 
 @Controller('/api')
 export class TeachersController {
@@ -29,12 +28,17 @@ export class TeachersController {
 
   @Get('/commonstudents')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(new ValidationPipe({ transform: true }))
   getCommonStudents(
     @Query('teacher', new ParseArrayPipe({ items: String }))
     teacherEmails: string[],
   ): Promise<GetCommonStudentsDto> {
     return this.teachersService.getCommonStudents(teacherEmails);
+  }
+
+  @Post('/suspend')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  suspendStudent(@Body() suspendStudentDto: SuspendStudentDto): Promise<void> {
+    return this.teachersService.suspendStudent(suspendStudentDto);
   }
 
   @Post('/test')
