@@ -6,6 +6,7 @@ import { StudentsRepository } from '../repositories/students.repository';
 import { TeacherStudentsRepository } from '../repositories/teacher-students.repository';
 import { Student } from '../entities/student.entity';
 import { TeacherStudent } from '../entities/teacher-student.entity';
+import { GetCommonStudentsDto } from '../dtos/response/get-common-students.dto';
 
 @Injectable()
 export class TeachersService {
@@ -53,6 +54,30 @@ export class TeachersService {
         },
       );
       await this.teacherStudentRepository.save(newTeacherStudents);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCommonStudents(
+    teacherEmails: string[],
+  ): Promise<GetCommonStudentsDto> {
+    try {
+      // check teachers' existence
+      let teachers: Teacher[] =
+        await this.teacherRepository.getListByEmail(teacherEmails);
+      if (!teachers || teachers.length != teacherEmails.length) {
+        throw new HttpException(
+          'Some of the teachers do not exist!',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      let commonStudents: Student[] =
+        await this.studentRepository.getCommonStudents(teachers);
+      let result: string[] =
+        commonStudents?.map((student: Student) => student.email + '@#') || [];
+      return { students: result };
     } catch (error) {
       throw error;
     }

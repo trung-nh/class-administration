@@ -4,10 +4,16 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  ParseArrayPipe,
   Post,
+  Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TeachersService } from '../services/teachers.service';
 import { RegisterStudentsDto } from '../dtos/request/register-students.dto';
+import { GetCommonStudentsDto } from '../dtos/response/get-common-students.dto';
+import { TestDto } from '../dtos/request/test.dto';
 
 @Controller('/api')
 export class TeachersController {
@@ -21,23 +27,18 @@ export class TeachersController {
     await this.teachersService.registerStudents(registerStudentsDto);
   }
 
-  @Get()
-  findAll() {
-    return 'this.teachersService.findAll()';
+  @Get('/commonstudents')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  getCommonStudents(
+    @Query('teacher', new ParseArrayPipe({ items: String }))
+    teacherEmails: string[],
+  ): Promise<GetCommonStudentsDto> {
+    return this.teachersService.getCommonStudents(teacherEmails);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.teachersService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateTeacherDto: UpdateTeacherDto) {
-  //   return this.teachersService.update(+id, updateTeacherDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.teachersService.remove(+id);
-  // }
+  @Post('/test')
+  test(@Body() body: TestDto) {
+    return body;
+  }
 }
