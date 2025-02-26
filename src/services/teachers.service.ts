@@ -1,13 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { RegisterStudentsDto } from '../dtos/request/register-students.dto';
+import { RegisterStudentsRequestDto } from '../dtos/request/register-students.request.dto';
 import { Teacher } from '../entities/teacher.entity';
 import { TeachersRepository } from '../repositories/teachers.repository';
 import { StudentsRepository } from '../repositories/students.repository';
 import { TeacherStudentsRepository } from '../repositories/teacher-students.repository';
 import { Student } from '../entities/student.entity';
 import { TeacherStudent } from '../entities/teacher-student.entity';
-import { GetCommonStudentsDto } from '../dtos/response/get-common-students.dto';
-import { SuspendStudentDto } from '../dtos/request/suspend-student.dto';
+import { GetCommonStudentsResponseDto } from '../dtos/response/get-common-students.response.dto';
+import { SuspendStudentRequestDto } from '../dtos/request/suspend-student.request.dto';
+import { RetrieveNotificationsRequestDto } from '../dtos/request/retrieve-notifications.request.dto';
+import { RetrieveNotificationsResponseDto } from '../dtos/response/retrieve-notifications.response.dto';
+import { ExtractEmailMentioningUtils } from '../utils/extractEmailMentioning.utils';
 
 @Injectable()
 export class TeachersService {
@@ -18,7 +21,7 @@ export class TeachersService {
   ) {}
 
   async registerStudents(
-    registerStudentsDto: RegisterStudentsDto,
+    registerStudentsDto: RegisterStudentsRequestDto,
   ): Promise<void> {
     try {
       // check teacher's existence
@@ -62,7 +65,7 @@ export class TeachersService {
 
   async getCommonStudents(
     teacherEmails: string[],
-  ): Promise<GetCommonStudentsDto> {
+  ): Promise<GetCommonStudentsResponseDto> {
     try {
       // check teachers' existence
       let teachers: Teacher[] =
@@ -84,7 +87,9 @@ export class TeachersService {
     }
   }
 
-  async suspendStudent(suspendStudentDto: SuspendStudentDto): Promise<void> {
+  async suspendStudent(
+    suspendStudentDto: SuspendStudentRequestDto,
+  ): Promise<void> {
     try {
       // check student's existence
       let existingStudent = await this.studentRepository.getOneByEmail(
@@ -99,6 +104,36 @@ export class TeachersService {
 
       // suspend
       await this.studentRepository.suspendStudent(existingStudent);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async retrieveNotifications({
+    teacher,
+    notification,
+  }: RetrieveNotificationsRequestDto): Promise<RetrieveNotificationsResponseDto> {
+    try {
+      // check teacher's existence
+      let existingTeacher = await this.teacherRepository.getOneByEmail(teacher);
+      if (!existingTeacher) {
+        throw new HttpException(
+          'No teacher with such email found!',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      // extract mentioned students
+      const mentionedStudents: string[] =
+        ExtractEmailMentioningUtils.exec(notification);
+      // retrieve notifications
+      const students: Student[] =
+        await this.studentRepository.retrieveNotifications(
+          existingTeacher.id,
+          mentionedStudents,
+        );
+      // return
+      return { recipients: students.map((student) => student.email) || [] };
     } catch (error) {
       throw error;
     }

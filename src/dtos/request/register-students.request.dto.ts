@@ -1,6 +1,6 @@
 import { ArrayNotEmpty, IsArray, IsEmail, IsNotEmpty } from 'class-validator';
 
-export class RegisterStudentsDto {
+export class RegisterStudentsRequestDto {
   @IsNotEmpty()
   @IsEmail()
   teacher: string;

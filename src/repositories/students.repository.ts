@@ -46,4 +46,20 @@ export class StudentsRepository extends Repository<Student> {
       .where({ id: student.id })
       .execute();
   }
+
+  async retrieveNotifications(
+    teacherId: number,
+    mentionedStudents: string[],
+  ): Promise<Student[]> {
+    const a = await this.createQueryBuilder('s')
+      .leftJoin(TeacherStudent, 'ts', 'ts.student_id = s.id')
+      .where('s.is_suspended = 0')
+      .andWhere('(s.email in (:...emails) OR ts.teacher_id = :teacherId)', {
+        emails: mentionedStudents,
+        teacherId: teacherId,
+      })
+      .select(['s.id', 's.email'])
+      .getMany();
+    return a;
+  }
 }

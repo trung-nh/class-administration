@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
-export class SuspendStudentDto {
+export class SuspendStudentRequestDto {
   @IsNotEmpty()
   @IsEmail()
   student: string;
